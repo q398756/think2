@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="/static/style/style.css" />
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script src="/static/js/common/my-toolkit.js"></script>
+
+    <script type="text/babel">
+
+        var picType = getQueryVariable("picType");// my-toolkit.js
+        var picJson;
+        var reconnectNum = 0;// 记录服务器返回的报错数
+
+        (function getPicJson(){
+            $.ajax({
+                type: "get",
+                data: {picType : picType},
+                url: "/index/getPicJson",
+                async: false,
+                // context: document.getElementById("testDb"),
+                success: function(data){
+                    // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片json}}}
+
+                    picJson = data.data;
+                },
+                error: function(data){
+                    if( reconnectNum++ < 3){
+                        getPicJson();
+                    } else{
+                        alert("抱歉，服务器错误");
+                        // 提示连接服务器失败
+                    }
+                },
+                complete: function(data){
+                    console.log("do getPicJson complete");
+                }
+            })
+        })( );
+    </script>
+</head>
+
+<body>
+    <section id="example" style="height: 1500px;"></section>
+
+    <script type="text/babel">
+        var Picture = React.createClass({
+            render: function () {
+                var temp = "/static/images/" + this.props.pSrc;
+                return <img src={temp} data-source={temp} data-group={this.props.pGroup} alt={this.props.pDesc} data-id={this.props.id} data-caption={this.props.pDesc} className="js-lightbox" data-role="light-box" width='100' height='100'/>
+            }
+        })
+
+        var Gallery = React.createClass({
+
+            render: function () {
+                debugger;
+                var items = [];
+                var pic = picJson.data
+                for (var i = 0; i < picJson.count; i++) {
+                    items.push(<Picture key={pic[i].Id} id={pic[i].Id} pSrc={pic[i].Address} pDesc={pic[i].Desc} pGroup={pic[i].TypeId}/>);
+                }
+
+                return (
+                    <div>
+                        <h1>{this.props.title}</h1>
+                        {items}
+                    </div>
+                )
+            }
+        })
+
+        ReactDOM.render(
+            <Gallery/>,
+            document.getElementById('example')
+        )
+    </script>
+</body>
+
+
+    <script>
+        $(function() {
+            var lightbox = new LightBox({
+                speed: 'fast',
+                maxWidth: 900,
+                maxHeight: 600
+            });
+        })
+    </script>
+    <script src='/static/js/index/move.js'></script>
+</html>

@@ -1,0 +1,10 @@
+let allParams = this.get("");
+var pageindex = allParams.pageindex;
+if (pageindex == undefined){
+pageindex = 1;
+}
+console.log(allParams);
+let model = this.model('picture');
+// let data = await model.where({TypeId: allParams.picType}).find();
+let data = await model.where({TypeId: allParams.picType}).page(this.get('page'), 10).order('Heat DESC').countSelect(pageindex)
+this.success(data)// Q：对查询到的数据是否为空等检查应该在服务端还是客户端

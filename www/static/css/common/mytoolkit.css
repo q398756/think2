@@ -1,0 +1,48 @@
+.middle {/* 垂直居中*/
+    position: absolute;
+    width: 100%;
+    top: 32%;
+    /*transform: translateY(-38.2%);*/
+}
+.ovh {/* 清除浮动 */
+    overflow: hidden;
+}
+.myh1, .myh2 {
+         text-rendering: optimizeLegibility;
+}
+.myh1 {
+    font-size: 27px;
+    line-height: 32px;
+    -webkit-margin-before: 0.67em;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+    font-family: "Segoe UI",Arial,sans-serif;
+    color: #e9ebee;
+}
+.myh2 {
+    overflow-y: scroll;
+    margin-top: 48px;
+    color: #14171a;
+    font-size: 18px;
+    line-height: 24px;
+    -webkit-margin-before: 0.83em;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+    font-family: "Segoe UI",Arial,sans-serif;
+}
+.myborder1 {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 30px inset;
+    border-bottom-right-radius: 6px 50px;
+    background: -webkit-gradient(linear, 0% 20%, 0% 1000%, from(rgb(255, 255, 255)), color-stop(0.1, rgb(243, 243, 243)), to(rgb(255, 255, 255)));
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(204, 204, 204);
+    border-image: initial;
+}
+.myheader {
+    background-color: #3b5998;
+}

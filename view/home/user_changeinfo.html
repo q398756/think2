@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录Tomoz。--聚焦当下</title>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/zui.js"></script>
+    <link  rel="stylesheet" href="/static/css/common/zui.css"/>
+    <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
+    <link rel="icon" href="/static/icon/favicon.ico" />
+
+    <link href="/static/css/common/chosen.min.css" rel="stylesheet">
+    <script src="/static/js/common/chosen.min.js"></script>
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script src="/static/js/common/my-toolkit.js"></script>
+    <script src="/static/js/common/index-toolkit.js"></script>
+    <script type="text/babel" src="/static/js/public/myheader.jsx"></script>
+    <script type="text/babel" src="/static/js/public/myfooter.jsx"></script>
+    <style>
+        .myh1{
+            color: #483e43;
+        }
+        .mydiv1 { /*  */
+            padding-top: 25px;
+            padding-bottom: 20px;
+            height: 400px;
+        }
+        .myheader {
+            background-color: white;
+        }
+        .width-control1{
+
+        }
+        .input-control-icon-left{
+            left: auto;
+        }
+        #myheader {
+            background-color: white;
+            border-bottom: #1e347b solid 1px;
+        }
+        #hyperlinkbox {
+            padding-left: 14%;
+            /*padding-top: 20px;*/
+        }
+        #hyperlinkbox .row{
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+<body style="background-color: #e6ecf0;">
+<div>
+    <header id="myheader">
+        <script type="text/babel">
+            ReactDOM.render(
+                <Myheader/>,
+                document.getElementById('myheader')
+            )
+        </script>
+    </header>
+    <section class="ovh" style="background-color: #e6ecf0;height: 68%;margin-top: 40px">
+        <div class="container">
+            <div class="row ovh ">
+                <div class="col-md-12 mydiv1 myborder1" style="background-color: #e6ecf0;">
+                    <div id="hyperlinkbox">
+                        <h1>现在就加入到Tomoz。</h1>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="users" type="text" class="form-control width-control1 " placeholder="您的11位手机号码">
+                                <label for="users" class="input-control-icon-left"><i class="icon icon-user "></i></label>
+                            </div>
+                            <div id="usersErrMsg1" class="col-md-4 hidden text-red errmsg">输入有误（11位纯数字）</div>
+                        </div>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="nickn" type="text" class="form-control width-control1 " placeholder="昵称">
+                                <label for="nickn" class="input-control-icon-left"><i class="icon icon-info-sign"></i></label>
+                            </div>
+                            <div id="nicknErrMsg1" class="col-md-4 hidden text-red errmsg"></div>
+                        </div>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="pwd1" type="password" class="form-control width-control1 " placeholder="密码">
+                                <label for="pwd1" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                            </div>
+                            <div id="pwd1ErrMsg1" class="col-md-4 hidden text-red errmsg">输入有误（最少6位，包括至少1个小写字母，1个数字，1个特殊字符）</div>
+                        </div>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="pwd2" type="password" class="form-control width-control1 " placeholder="确认密码">
+                                <label for="pwd2" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                            </div>
+                            <div id="pwd2ErrMsg1" class="col-md-4 hidden text-red errmsg">输入有误（两次密码输入不一致）</div>
+                        </div>
+                        <div class="row">
+                            <div class="input-control col-md-4">
+                                <select data-placeholder="请选择您的性别" class="chosen-select form-control" id="sex">
+                                    <option value=""></option>
+                                    <option value="male" data-keys="male">男</option>
+                                    <option value="female" data-keys="female">女</option>
+                                </select>
+                            </div>
+                            <div id="sexErrMsg1" class="col-md-4 hidden text-red  errmsg">请选择</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-3">
+                                <button class="btn btn-primary" type="button" id="register"><i class="icon icon-signin"></i>注册</button>
+                                <button class="btn" type="button" id="login"><i class="icon icon-info-sign"></i>已有账户，点此登陆</button>
+                            </div>
+                            <div class="col-md-offset-2 col-md-2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-push-4"></div>
+            </div>
+            <div class="row">...</div>
+        </div>
+    </section>
+    <!--<footer id="myfooter">-->
+    <!--<script type="text/babel">-->
+    <!--ReactDOM.render(-->
+    <!--<Myfooter/>,-->
+    <!--document.getElementById('myfooter')-->
+    <!--)-->
+    <!--</script>-->
+    <!--</footer>-->
+</div>
+
+<script type="text/javascript">
+    $("input, select").on("change", function (e) {
+        debugger;
+        $(e.target.parentElement.parentElement.getElementsByClassName("errmsg")[0]).addClass("hidden");
+    })
+
+    function checkInfo(data){
+        // data = {
+        //     id: id,
+        //     nickn: nickn,
+        //     pwd1: pwd1,
+        //     pwd2: pwd2,
+        //     sex: sex
+        // }
+
+        var state = true;
+        var pPattern = /^.*(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^&*?.]).*$/;//密码强度正则，最少6位，包括至少1个小写字母，1个数字，1个特殊字符
+
+        if(!checkMobile( data.id)){
+            //不是完整正确的11位手机号
+            $("#usersErrMsg1").removeClass("hidden");
+            $("#users").focus();
+            state = false;
+        }
+        if(!pPattern.test(data.pwd1)){
+            //密码强度不够或不符合要求
+            $("#pwd1ErrMsg1").removeClass("hidden");
+            $("#pwd1").focus();
+            state = false;
+        } else if( data.pwd1 != data.pwd2){
+            //两次输入不一致
+            $("#pwd2ErrMsg1").removeClass("hidden");
+            $("#pwd2").focus();
+            state = false;
+        }
+        debugger
+        if( data.sex == ""){
+            //未选性别
+            $("#sexErrMsg1").removeClass("hidden");
+            state = false;
+        }
+
+        return state;
+    }
+
+    function submitInfo(data){
+        console.log({
+            Id: data.id,
+            Nickname: data.nickn,
+            Sex: data.sex.substring(0,1).toUpperCase(),
+            password: data.pwd1
+        });
+        $.ajax({
+            type: "post",
+            data: {
+                id: data.id,
+                nickn: data.nickn,
+                sex: data.sex.substring(0,1).toUpperCase(),
+                pwd: data.pwd1
+            },
+            url: "/user/reigstercheck",
+            async: true,
+            success: function(data){
+
+                var state = data.errno;
+                var data = data.data;
+
+                if( state == 0){//加个提示框
+                    $("#loginpass").addClass("icon-check");
+                    $("#errmsg1").addClass("hidden");
+                    $("#errmsg2").addClass("hidden");
+                    $("#errmsg9").addClass("hidden");
+                    setTimeout(function () {
+                        window.location.href = "/index/showall"
+                    },500)
+                }else if(state == 1){
+                    //为1表示账户不存在
+                    $("#errmsg1").removeClass("hidden");
+                    $("#errmsg2").addClass("hidden");
+                    $("#errmsg9").addClass("hidden");
+                }else if(state == 2){
+                    //为2表示密码错误
+                    $("#errmsg2").removeClass("hidden");
+                    $("#errmsg1").addClass("hidden");
+                    $("#errmsg9").addClass("hidden");
+                }else{
+                    // 9为未知错误
+                    $("#errmsg9").removeClass("hidden");
+                    $("#errmsg2").addClass("hidden");
+                    $("#errmsg1").addClass("hidden");
+                }
+            },
+            error: function(data){
+
+            },
+            complete: function(data){
+                console.log("do logincheck complete");
+            }
+        })
+    }
+    document.getElementById("login").addEventListener("click", function(e){
+        window.location.href = "login";
+    })
+    $('select.chosen-select').chosen({
+        no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
+        disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+        search_contains: true         // 从任意位置开始检索
+    });
+
+    $("#register").on("click", function () {
+
+        var id = $("#users").val();
+        var nickn = $("#nickn").val();
+        var pwd1 = $("#pwd1").val();
+        var pwd2 = $("#pwd2").val();
+        var sex = $("#sex").val();
+        var data = {
+            id: id,
+            nickn: nickn,
+            pwd1: pwd1,
+            pwd2: pwd2,
+            sex: sex
+        }
+
+        debugger;
+        if( checkInfo(data)){
+            submitInfo(data);
+        }
+
+
+    })
+
+</script>
+
+
+</body>
+</html>

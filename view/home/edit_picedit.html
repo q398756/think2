@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片处理</title>
+
+    <link rel="stylesheet" href="/static/style/style.css" />
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/zui.js"></script>
+    <link  rel="stylesheet" href="/static/css/common/zui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/edit/htmleaf-demo.css">
+    <!--<link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>-->
+
+    <script src="/static/js/common/my-toolkit.js"></script>
+    <script src="/static/js/common/index-toolkit.js"></script>
+    <script type="text/babel" src="/static/js/public/myfooter.jsx"></script>
+    <script type="text/babel" src="/static/js/public/myheader.jsx"></script>
+
+    <!--[if IE]>
+    <script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
+    <![endif]-->
+    <style>
+        .myborder2{
+            border: solid 1px gray;
+            margin-top: 14px;
+            margin-left: 12px;
+            /* margin-right: 40px; */
+            text-align: center;
+        }
+        .btn-group{
+            margin-top: 6px ;
+        }
+    </style>
+    <script>
+        function resetfn() {
+            loadImage(document.getElementById('image-chooser'));
+        }
+    </script>
+</head>
+<body style="">
+<div class="">
+    <header id="myheader">
+        <script type="text/babel">
+            ReactDOM.render(
+                <Myheader/>,
+                document.getElementById('myheader')
+            )
+        </script>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>图片编辑 <small>稍稍修改你喜爱的图片</small></h1>
+                <hr>
+                <span class="btn btn-info" onclick="document.getElementById('image-chooser').click();">上传图片</span>
+                <img src="" id="hideImg" alt="选中的图片" style="display: none">
+                <button class="btn btn-info" onclick="downloadImage()">下载图片</button>
+                <div class="alert alert-warning" id="error" style="display:none;">
+                    <strong>Error!</strong> 你还没有上传图片！
+                </div>
+
+                <hr>
+                <div class="btn-toolbar">
+                    <div class="btn-group" id="" style="">
+                        <!--<h3>Filters:</h3>-->
+                        <button id="resetbtn" class="btn btn-warning" onclick="resetfn()">重置</button>
+                        <button class="btn" onclick="filter(5)">亮度 +1</button>
+                        <button class="btn" onclick="filter(6)">亮度 -1</button>
+                        <button class="btn" onclick="filter(7)">对比度 +1</button>
+                        <button class="btn" onclick="filter(8)">对比度 -1</button>
+                    </div>
+
+                    <div class="btn-group" id="" style="">
+                        <button class="btn" onclick="filter(0)">黑白</button>
+                        <button class="btn" onclick="filter(10)">黑白2</button>
+                        <button class="btn" onclick="filter(1)">老照片滤镜</button>
+                        <button class="btn" onclick="filter(2)">负片</button>
+                        <button class="btn" onclick="filter(3)">Vintage</button>
+                        <button class="btn" onclick="filter(4)">Cross Process</button>
+                        <button class="btn" onclick="filter(9)">Noise</button>
+                        <button class="btn" onclick="filter(11)">彩蜡</button>
+                        <button class="btn" onclick="filter(12)">卡通化</button>
+                        <button class="btn" onclick="filter(13)">Vignette</button>
+                        <!--<button class="btn btn-warning" onclick="myFilter()">Custom Filter</button>-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 myborder2">
+                <input type="file" id="image-chooser" style="display:none" onchange="loadImage(this)">
+                <canvas id="canvas" width="400" height="300" class="well"></canvas>
+            </div>
+        </div>
+    </div>
+    <footer id="myfooter">
+        <script type="text/babel">
+            ReactDOM.render(
+                <Myfooter/>,
+                document.getElementById('myfooter')
+            )
+        </script>
+    </footer>
+</div>
+<script type="text/javascript" src="/static/js/edit/Chobi.min.js"></script>
+<script type="text/javascript">
+
+    document.getElementById("image-chooser").addEventListener("change", function () {
+        document.getElementById("resetbtn").removeEventListener("click", addressload);
+        loadImage(this);
+    })
+
+    var imgObj = null; //global Chobi object
+    function loadImage(elem){
+        //you should probably check if file is image or not before passing it
+        imgObj = new Chobi(elem);
+        imgObj.ready(function(){
+            this.canvas = document.getElementById("canvas");
+            this.loadImageToCanvas();
+
+            //show filters to users
+            document.getElementById("filters").style.display = "block";
+        });
+    }
+
+    function downloadImage(){
+        if(imgObj == null){
+            document.getElementById("error").style.display="block";
+            setTimeout(function(){
+                document.getElementById("error").style.display="none";
+            }, 4000);
+            return;
+        }
+        imgObj.download('demo-image', 'jpg');/* 此处可能可以修改一下 */
+    }
+
+
+    //0 -> Black and white
+    //10 -> Black and white2
+    //1 -> sepia
+    //2 -> negative
+    //3 -> vintage
+    //4 -> crossprocess
+    //5 -> Brightness increase
+    //6 -> Brightness decrease
+    //7 -> Contrast increase
+    //8 -> Contrast decrease
+    //9 -> Noise Effect
+    //11 -> Crayon effect
+    //12 -> Cartoonify
+    //13 -> Vignette
+    //filter chaining is also possible, like imgObj.brightness(-5).sepia().negative();
+    function filter(id){
+        if(imgObj == null){
+            alert("Choose an image first!");
+            return;
+        }
+        if(id==0){
+            imgObj.blackAndWhite();
+        }
+        else if(id==1){
+            imgObj.sepia();
+        }
+        else if(id==2){
+            imgObj.negative();
+        }
+        else if(id==3){
+            imgObj.vintage();
+        }
+        else if(id==4){
+            imgObj.crossProcess();
+        }
+        else if(id==5){
+            imgObj.brightness(1);
+        }
+        else if(id==6){
+            imgObj.brightness(-1);
+        }
+        else if(id==7){
+            imgObj.contrast(1);
+        }
+        else if(id==8){
+            imgObj.contrast(-1);
+        }
+        else if(id==9){
+            imgObj.noise();
+        }
+        else if(id==10){
+            imgObj.blackAndWhite2();
+        }
+        else if(id==11){
+            imgObj.crayon();
+        }
+        else if(id==12){
+            imgObj.cartoon();
+        }
+        else if(id==13){
+            imgObj.vignette();
+        }
+
+
+        imgObj.loadImageToCanvas();
+    }
+
+    var picAddress = "/static/images/" + getQueryVariable("picAddress");
+    if( picAddress.length ==0){// !!!!!这个if else语句中，if部分未完成，尚无需求
+        var picId = getQueryVariable("picId");// my-toolkit.js
+        if( picId.length != 0){
+            $.ajax({
+                type: "get",
+                data: {picId: picId},
+                url: "/index/getSinglePic",
+                async: false,
+                success: function(data){
+                    // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片类型json}}}
+
+                    picAddress = data.data;
+                    debugger;
+                    console.log(picTypeJson)
+                },
+                error: function(data){
+                    // if( reconnectNum++ < 3){
+                    //     getPicTypeJson();
+                    // } else{
+                    alert("抱歉，服务器错误");
+                    // 提示连接服务器失败
+                    // }
+                },
+                complete: function(data){
+                    console.log("do getSinglePic complete");
+                }
+            })
+        }
+    }
+    else{
+        //you should probably check if file is image or not before passing it
+        imgObj = new Chobi(picAddress);
+        imgObj.ready(function(){
+            this.canvas = document.getElementById("canvas");
+            this.loadImageToCanvas();
+
+            //show filters to users
+            document.getElementById("filters").style.display = "block";
+        });
+        var resetbtn = document.getElementById("resetbtn");
+        // resetbtn.detachEvent("onclick", resetfn);//IE
+        resetbtn.removeEventListener("click", resetfn);
+        resetbtn.addEventListener("click", addressload)
+    }
+
+    function addressload(){
+        loadImage(picAddress);
+    }
+</script>
+</body>
+</html>

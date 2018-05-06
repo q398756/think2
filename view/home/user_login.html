@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录Tomoz。--聚焦当下</title>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/zui.js"></script>
+    <link  rel="stylesheet" href="/static/css/common/zui.css"/>
+    <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
+    <link rel="icon" href="/static/icon/favicon.ico" />
+
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script type="text/babel" src="/static/js/public/myheader.jsx"></script>
+    <script type="text/babel" src="/static/js/public/myfooter.jsx"></script>
+    <style>
+        .myh1{
+            color: #483e43;
+        }
+        .mydiv1 { /*  */
+            padding-top: 25px;
+            padding-bottom: 20px;
+            height: 400px;
+        }
+        .myheader {
+            background-color: white;
+        }
+        .width-control1{
+
+        }
+        .input-control-icon-left{
+            left: auto;
+        }
+        #myheader {
+            background-color: white;
+            border-bottom: #1e347b solid 1px;
+        }
+        #hyperlinkbox {
+            padding-left: 14%;
+            /*padding-top: 20px;*/
+        }
+        #hyperlinkbox .row{
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+<body style="background-color: #e6ecf0;">
+<div>
+    <header id="myheader">
+        <script type="text/babel">
+            ReactDOM.render(
+                <Myheader/>,
+                document.getElementById('myheader')
+            )
+        </script>
+    </header>
+    <section class="ovh" style="background-color: #e6ecf0;height: 68%;margin-top: 40px">
+        <div class="container">
+            <div class="row ovh ">
+                <div class="col-md-12 mydiv1 myborder1" style="background-color: #e6ecf0;">
+                    <div id="hyperlinkbox">
+                        <h1>登陆到Tomoz。</h1>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="id" type="text" class="form-control width-control1 " placeholder="用户名">
+                                <label for="id" class="input-control-icon-left"><i class="icon icon-user "></i></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="pwd" type="password" class="form-control width-control1 " placeholder="密码">
+                                <label for="pwd" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                                <label for="pwd" class="input-control-icon-right" id="loginpass"><i class="icon"></i></label>
+                                <label id="errmsg1" for="pwd" class="input-control-label-right text-right text-red hidden">无此账户</label>
+                                <label id="errmsg2" for="pwd" class="input-control-label-right text-right text-red hidden">密码错误</label>
+                                <label id="errmsg9" for="pwd" class="input-control-label-right text-right text-red hidden">未知错误</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-2">
+                                <button class="btn btn-primary" type="button" id="login"><i class="icon icon-signin"></i>登陆</button>
+                                <button class="btn" type="button" id="register"><i class="icon icon-info-sign"></i>注册</button>
+                            </div>
+                            <div class="col-md-offset-2 col-md-2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-push-4"></div>
+            </div>
+            <div class="row">...</div>
+        </div>
+    </section>
+    <!--<footer id="myfooter">-->
+    <!--<script type="text/babel">-->
+    <!--ReactDOM.render(-->
+    <!--<Myfooter/>,-->
+    <!--document.getElementById('myfooter')-->
+    <!--)-->
+    <!--</script>-->
+    <!--</footer>-->
+</div>
+
+<script type="text/javascript">
+    document.getElementById("register").addEventListener("click", function(e){
+        window.location.href = "register";
+    })
+    $("#login").on("click", function () {
+
+        var id = $("#id").val();
+        var pwd = $("#pwd").val();
+        var data = {
+            id: id,
+            password: pwd
+        }
+        debugger;
+        $.ajax({
+            type: "post",
+            data: data,
+            url: "/user/logincheck",
+            async: true,
+            success: function(data){
+
+                var state = data.errno;
+                var data = data.data;
+
+                if( state == 0){
+                    $("#loginpass").addClass("icon-check");
+                    $("#errmsg1").addClass("hidden");
+                    $("#errmsg2").addClass("hidden");
+                    $("#errmsg9").addClass("hidden");
+                    setTimeout(function () {
+                        window.location.href = "/index/showall"
+                    },500)
+                }else if(state == 1){
+                    //为1表示账户不存在
+                    $("#errmsg1").removeClass("hidden");
+                    $("#errmsg2").addClass("hidden");
+                    $("#errmsg9").addClass("hidden");
+                }else if(state == 2){
+                    //为2表示密码错误
+                    $("#errmsg2").removeClass("hidden");
+                    $("#errmsg1").addClass("hidden");
+                    $("#errmsg9").addClass("hidden");
+                }else{
+                    // 9为未知错误
+                    $("#errmsg9").removeClass("hidden");
+                    $("#errmsg2").addClass("hidden");
+                    $("#errmsg1").addClass("hidden");
+                }
+            },
+            error: function(data){
+
+            },
+            complete: function(data){
+                console.log("do logincheck complete");
+            }
+        })
+    })
+</script>
+</body>
+</html>

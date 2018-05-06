@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>图片概览</title>
+    <link rel="stylesheet" href="/static/style/style.css" />
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script src="/static/js/common/my-toolkit.js"></script>
+    <link rel="icon" href="/static/icon/favicon.ico" />
+    <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
+    <script type="text/babel" src="/static/js/public/myheader.jsx"></script>
+    <script type="text/babel" src="/static/js/public/myfooter.jsx"></script>
+    <style>
+        .container2{
+            background-color: #fff;/* 请稍后 */
+            border:1px solid #333;
+            border-radius: 8px;
+            box-shadow:inset 0 0 10px 10px #ccc;
+        }
+        .card{
+            overflow: hidden;
+        }
+        .mypic{
+            height: 200px !important;
+            width: 100%;
+        }
+        .picmiddle{
+
+        }
+    </style>
+    <script type="text/babel">
+
+        var picType = getQueryVariable("picType");// my-toolkit.js
+        var picTypeJson, picJson;
+        var reconnectNum = 0;// 记录服务器返回的报错数
+
+        // (function getPicTypeJson(){
+        //     $.ajax({
+        //         type: "get",
+        //         url: "/index/getPicTypeJson",
+        //         async: false,
+        //         success: function(data){
+        //             // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片类型json}}}
+        //
+        //             picTypeJson = data.data;
+        //
+        //             console.log(picTypeJson)
+        //         },
+        //         error: function(data){
+        //             if( reconnectNum++ < 3){
+        //                 getPicTypeJson();
+        //             } else{
+        //                 alert("抱歉，服务器错误");
+        //                 // 提示连接服务器失败
+        //             }
+        //         },
+        //         complete: function(data){
+        //             console.log("do getPicTypeJson complete");
+        //         }
+        //     })
+        // })( );
+
+        function getPicJson( picType, num){
+
+            var data = {
+                picType : picType,
+                num : num
+            }
+            $.ajax({
+                type: "get",
+                data: data,
+                url: "/index/getPicJson",
+                async: false,
+                // context: document.getElementById("testDb"),
+                success: function(data){
+                    // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片json}}}
+
+                    picJson = data.data;
+                },
+                error: function(data){
+                    if( reconnectNum++ < 3){
+                        getPicJson( picType);
+                    } else{
+                        alert("抱歉，服务器错误");
+                        // 提示连接服务器失败
+                    }
+                },
+                complete: function(data){
+                    console.log("do getPicJson complete");
+                }
+            })
+        }
+    </script>
+</head>
+
+<body style="background-color: #3b5998;">
+
+<header id="myheader">
+    <script type="text/babel">
+        ReactDOM.render(
+            <Myheader/>,
+            document.getElementById('myheader')
+        )
+    </script>
+</header>
+
+
+<section style="">
+    <div class="container container2">
+        <div class="container">
+            <div class="row">
+                <div id="example" class=" col-md-12"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="myfooter">
+    <script type="text/babel">
+        ReactDOM.render(
+            <Myfooter/>,
+            document.getElementById('myfooter')
+        )
+    </script>
+</footer>
+
+<script type="text/babel">
+    function picOnload() {
+        var height = this.height();
+        if(this.height() <= 198){
+            this.height(198);
+        }
+    }
+
+    var Picture2 = React.createClass({
+        componentDidMount : function(){//在第一次渲染后调用
+            var target = $("#" + this.props.id);
+            target.on('load', picOnload.bind(target));
+        },
+
+        render: function () {
+            var temp = "/static/images/" + this.props.pSrc;
+            var desc = this.props.pDesc;
+            if( desc.length > 20){
+                desc = "" + desc.substring( 0, 17) + "...";
+            }
+            return (
+                <div className="col-md-4 col-sm-6 col-lg-3">
+                    <div className="card" style={{display:"tablecell",verticalAlign:"middle"}}>
+                        <img src={temp} id={this.props.id} data-source={temp} data-group={this.props.pGroup} alt={this.props.pDesc} data-id={this.props.id} data-caption={this.props.pDesc} className="img-rounded js-lightbox mypic picmiddle" data-role="light-box" width='100' height='100'/>
+                        <div className="card-content text-muted">{desc}</div>
+                        <div className="card-actions">
+                            <div className="btn-group">
+                                <button type="button" className="btn btn-danger"><i className="icon-heart"></i> 喜欢</button>
+                                <button type="button" className="btn btn-success myedit"><i className="icon-edit"></i> 编辑</button>
+                            </div>
+                            <div className="pull-right text-danger"><i className="icon-heart-empty"></i> {this.props.pHeat} 人喜欢</div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    })
+
+    var Gallery = React.createClass({
+        componentWillMount: function(){//在渲染前调用
+            getPicJson( picType, 20);
+        },
+
+        componentDidMount : function(){//在第一次渲染后调用
+            $("#" + this.props.id).on('click', function (e) {
+                var classNameStr = "" + e.target.className;
+                if( classNameStr.indexOf("myedit") == -1) return;
+                var address = e.target.parentElement.parentElement.parentElement.getElementsByTagName("img")[0].src;//此处对组件结构要求极高 需修改
+                var lastslash = address.lastIndexOf("/");
+                var str = "/edit/picedit?picAddress=" + address.substring(lastslash+1);
+                console.log(str);
+                debugger;
+                window.location.href = str;
+            })
+        },
+
+        render: function () {
+            var items = [];
+            var pic = picJson.data;
+            if( picJson.count != 0){
+                for (var i = 0; i < picJson.data.length; i++) {
+                    items.push(<Picture2 key={pic[i].Id} id={pic[i].Id} pSrc={pic[i].Address} pDesc={pic[i].Desc} pGroup={pic[i].TypeId} pHeat={pic[i].Heat}/>);
+                }
+            } else {
+                items.push(<div>尚未有此类图片</div>);
+            }
+
+
+            return (
+                <div className="cards cards-condensed" id={this.props.id}>
+                    <h1>{this.props.tName}</h1>
+                    {items}
+                </div>
+            )
+        }
+    })
+
+    var Container = React.createClass({
+
+        componentDidMount: function() {
+            var picId = getQueryVariable("picId");// my-toolkit.js
+            if( picId){
+                setTimeout(function () {
+                    $("#" + picId).click();
+                }, 233)
+            }
+        },
+
+        render: function () {
+            var items = [];
+            var tType = "T" + picType;
+
+            return (
+                <div>
+                    <h1></h1>
+                    <Gallery id={tType} key={tType} tName={""}/>
+                </div>
+            )
+        }
+    })
+
+    ReactDOM.render(
+        <Container/>,
+        document.getElementById('example')
+    )
+</script>
+
+<script type="text/javascript" src="/static/js/common/zui.js"></script>
+<link  rel="stylesheet" href="/static/css/common/zui.css"/>
+</body>
+
+
+<script>
+    $(function() {
+        var lightbox = new LightBox({
+            speed: 'fast',
+            maxWidth: 900,
+            maxHeight: 600
+        });
+    })
+</script>
+<script src='/static/js/index/move.js'></script>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>图片概览</title>
+    <link rel="stylesheet" href="/static/style/style.css" />
+    <link rel="stylesheet" href="/static/css/index/index.css" />
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script src="/static/js/common/my-toolkit.js"></script>
+    <script src="/static/js/common/index-toolkit.js"></script>
+    <link rel="icon" href="/static/icon/favicon.ico" />
+    <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
+    <script type="text/babel" src="/static/js/public/myheader.jsx"></script>
+    <script type="text/babel" src="/static/js/public/myfooter.jsx"></script>
+    <style>
+        .container2{
+            background-color: #fff;/* 请稍后 */
+            border:1px solid #333;
+            border-radius: 8px;
+            box-shadow:inset 0 0 10px 10px #ccc;
+        }
+        .card{
+            overflow: hidden;
+        }
+        .mypic{
+            height: 200px !important;
+            width: 100%;
+        }
+        .picmiddle{
+
+        }
+    </style>
+    <script type="text/babel">
+
+        var userid = cookieToJson(document.cookie).id;
+        var picJson;
+        var reconnectNum = 0;// 记录服务器返回的报错数
+
+        function getPicJson( ){
+            var data = {
+                userid : userid,
+            }
+            $.ajax({
+                type: "get",
+                data: data,
+                url: "/user/getcolpicjson",
+                async: false,
+                success: function(data){
+                    // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片json}}}
+debugger;
+                    picJson = data.data;
+                },
+                error: function(data){
+                    if( reconnectNum++ < 3){
+                        getPicJson( );
+                    } else{
+                        alert("抱歉，服务器错误");
+                        // 提示连接服务器失败
+                    }
+                },
+                complete: function(data){
+                    console.log("do getcolpicjson complete");
+                }
+            })
+        }
+    </script>
+</head>
+
+<body style="background-color: #3b5998;">
+
+<header id="myheader">
+    <script type="text/babel">
+        ReactDOM.render(
+            <Myheader/>,
+            document.getElementById('myheader')
+        )
+    </script>
+</header>
+
+
+<section style="">
+    <div class="container container2">
+        <div class="container">
+            <div class="row">
+                <div id="example" class=" col-md-12"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="myfooter">
+    <script type="text/babel">
+        ReactDOM.render(
+            <Myfooter/>,
+            document.getElementById('myfooter')
+        )
+    </script>
+</footer>
+
+<script type="text/babel">
+    function picOnload() {
+        var height = this.height();
+        if(this.height() <= 198){
+            this.height(198);
+        }
+    }
+
+    function logtipsAddHidden(){
+        $("#logtips").addClass("hidden");
+    }
+
+    function coltipsAddHidden() {
+        $("#coltips").addClass("hidden");
+    }
+
+    var btnIntial = false;
+
+    var Picture2 = React.createClass({
+        //在第一次渲染后调用
+        componentDidMount : function(){
+            var target = $("#" + this.props.id);
+            target.on('load', picOnload.bind(target));
+
+
+            if( !btnIntial){
+                btnIntial = true;
+                $(".collectbtn").on("click", function (e) {
+                    debugger;
+                    if( cookieExist()){
+                        var cookieJson = cookieToJson(document.cookie);
+                        // 取图片id与用户id一并提交到服务器
+                        var picid = e.target.parentElement.parentElement.parentElement.getElementsByTagName("img")[0].id;
+                        var userid = cookieJson.id;
+
+                        $.ajax({
+                            type: "get",
+                            data: {
+                                userid: userid,
+                                picid: picid
+                            },
+                            url: "/index/usercollectcancel",
+                            async: true,
+                            success: function(data){
+                                // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片json}}}
+                                debugger;
+                                picColNumShow();
+                                if(data.errno == 0){
+                                    $("#coltips").removeClass("hidden");
+                                    window.scrollTo(0, 0);
+                                    setTimeout(coltipsAddHidden, 1000);
+                                }else{
+
+                                }
+                            },
+                            error: function(data){
+                                debugger;
+                            },
+                            complete: function(data){
+                                console.log("do usercollectcancel complete");
+                            }
+                        })
+
+                    }else{
+                        $("#logtips").removeClass("hidden");
+                        window.scrollTo(0, 0);
+                        setTimeout(logtipsAddHidden, 1000)
+                    }
+                })
+            }
+
+        },
+
+        render: function () {
+            var temp = "/static/images/" + this.props.pSrc;
+            var desc = this.props.pDesc;
+            return (
+                <div className="col-md-4 col-sm-6 col-lg-3">
+                    <div className="card" style={{display:"tablecell",verticalAlign:"middle"}}>
+                        <a href={temp} data-toggle="lightbox" data-group={this.props.pGroup} className="lightbox-toggle" data-caption={this.props.pDesc}>
+                            <img src={temp} className="img-rounded mypic" alt={desc} id={this.props.id}/>
+                        </a>
+                        <div className="card-content text-muted text-ellipsis">{desc}</div>
+                        <div className="card-actions">
+                            <div className="btn-group">
+                                <button type="button" className="btn btn-danger collectbtn" data-toggle="popover" data-placement="top" data-content="取消收藏成功" title="恭喜你！"><i className="icon-heart"></i> 取消收藏</button>
+                                <button type="button" className="btn btn-success myedit"><i className="icon-edit"></i> 编辑</button>
+                            </div>
+                            <div className="pull-right text-danger"><i className="icon-heart-empty"></i> {this.props.pHeat} 人收藏</div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    })
+
+    var Gallery = React.createClass({
+        //在渲染前调用
+        componentWillMount: function(){
+            getPicJson( );
+        },
+        //在第一次渲染后调用
+        componentDidMount : function(){
+            $("#" + this.props.id).on('click', function (e) {
+                var classNameStr = "" + e.target.className;
+                if( classNameStr.indexOf("myedit") == -1) return;
+                var address = e.target.parentElement.parentElement.parentElement.getElementsByTagName("img")[0].src;//此处对组件结构要求极高 需修改
+                var lastslash = address.lastIndexOf("/");
+                var str = "/edit/picedit?picAddress=" + address.substring(lastslash+1);
+                console.log(str);
+                window.location.href = str;
+            })
+        },
+
+        render: function () {
+            var items = [];
+            var pic = picJson;
+            if( picJson.count != 0){
+                for (var i = 0; i < picJson.length; i++) {
+                    items.push(<Picture2 key={pic[i].Id} id={pic[i].Id} pSrc={pic[i].Address} pDesc={pic[i].Desc} pGroup={pic[i].TypeId} pHeat={pic[i].Heat}/>);
+                }
+            } else {
+                items.push(<div>尚未有此类图片</div>);
+            }
+
+            return (
+                <div>
+                    <div className="cards cards-condensed" id={this.props.id}>
+                        <h1>{this.props.tName}</h1>
+                        {items}
+                    </div>
+                    <Ul totalPages={picJson.totalPages} currentPage={picJson.currentPage} />
+                </div>
+
+            )
+        }
+    })
+
+    var Ul = React.createClass({
+        componentWillMount: function(){//在渲染前调用
+        },
+
+        componentDidMount : function(){//在第一次渲染后调用
+        },
+
+        render: function () {
+            var items = [];
+            var totalnum = this.props.totalPages, currentnum = this.props.currentPage;
+            var url = "";
+
+
+            for( var i = 1; i<= totalnum; i++){
+                url = setQueryVariable( "pageindex", i);
+                if( i == currentnum){
+                    items.push(
+                        <li className="active"><a href="">{i}</a></li>
+                    )
+                }
+                else{
+                    items.push(
+                        <li className=""><a href={url}>{i}</a></li>
+                    )
+                }
+            }
+
+            var previous, next;
+            if( currentnum == 1){
+                previous = "";
+                next = setQueryVariable("pageindex", currentnum+1);
+            }else if(currentnum == totalnum){
+                previous = setQueryVariable("pageindex", currentnum-1);
+                next = "";
+            }else{
+                previous = setQueryVariable("pageindex", currentnum-1);
+                next = setQueryVariable("pageindex", currentnum+1);
+            }
+
+            return (
+                <div>
+                    <ul className="pager">
+                        <li className="previous"><a href={previous}>«</a></li>
+                        {items}
+                        <li className="next"><a href={next}>»</a></li>
+                    </ul>
+                </div>
+            )
+
+        }
+    })
+
+
+    var Container = React.createClass({
+
+        componentDidMount: function() {
+            var link = document.createElement('link');
+            link.type = 'text/css';
+            link.rel = 'stylesheet';
+            link.href = '/static/css/common/zui.css';
+            document.getElementsByTagName("head")[0].appendChild(link);
+            $.getScript("/static/js/common/zui.js");
+            link.onload = function () {
+                debugger;
+                // var pic = picJson.data;
+                // var index = 0;
+                // $('a.lightbox-toggle').lightbox({
+                //     image: "/static/images/" + pic[0].Address,
+                //     caption: pic[0].Desc
+                // });
+                // debugger;
+
+                var picId = getQueryVariable("picId");// my-toolkit.js
+                if( picId){
+                    setTimeout(function () {
+                        $("#" + picId).click();
+
+                    }, 250)
+                }
+                $('[data-toggle="popover"]').popover();
+            }
+
+        },
+
+        render: function () {
+            var items = [];
+
+            return (
+                <div>
+                    <div id="logtips" className="alert alert-info with-icon hidden" style={{marginTop:"18px", marginBottom: "0px"}}>
+                        <i className="icon-info-sign"></i>
+                        <div className="content"><strong>Hi!</strong> 请先 <a href="/user/login">登录</a> ，才能收藏。</div>
+                    </div>
+                    <div id="coltips" className="alert alert-success with-icon hidden" style={{marginTop:"18px", marginBottom: "0px"}}>
+                        <i className="icon-ok-sign"></i>
+                        <div className="content">
+                            <h4>完成！</h4>
+                            <hr/>
+                            <strong>取消收藏。</strong>
+                        </div>
+                    </div>
+                    <Gallery id="gallery" tName={""}/>
+
+                </div>
+            )
+        }
+    })
+
+    ReactDOM.render(
+        <Container/>,
+        document.getElementById('example')
+    )
+
+
+</script>
+
+<!--<link  rel="stylesheet" href="/static/css/common/zui.css"/>-->
+<!--<script type="text/javascript" src="/static/js/common/zui.js"></script>-->
+</body>
+</html>

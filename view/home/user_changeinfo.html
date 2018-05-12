@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>登录Tomoz。--聚焦当下</title>
+    <title>加入Tomoz。--聚焦当下</title>
     <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/common/zui.js"></script>
     <link  rel="stylesheet" href="/static/css/common/zui.css"/>
@@ -65,14 +65,7 @@
             <div class="row ovh ">
                 <div class="col-md-12 mydiv1 myborder1" style="background-color: #e6ecf0;">
                     <div id="hyperlinkbox">
-                        <h1>现在就加入到Tomoz。</h1>
-                        <div class="row">
-                            <div class="input-control has-icon-left col-md-4">
-                                <input id="users" type="text" class="form-control width-control1 " placeholder="您的11位手机号码">
-                                <label for="users" class="input-control-icon-left"><i class="icon icon-user "></i></label>
-                            </div>
-                            <div id="usersErrMsg1" class="col-md-4 hidden text-red errmsg">输入有误（11位纯数字）</div>
-                        </div>
+                        <h1>修改您的信息。</h1>
                         <div class="row">
                             <div class="input-control has-icon-left col-md-4">
                                 <input id="nickn" type="text" class="form-control width-control1 " placeholder="昵称">
@@ -82,14 +75,20 @@
                         </div>
                         <div class="row">
                             <div class="input-control has-icon-left col-md-4">
-                                <input id="pwd1" type="password" class="form-control width-control1 " placeholder="密码">
+                                <input id="pwdold" type="password" class="form-control width-control1 " placeholder="旧密码">
+                                <label for="pwdold" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-control has-icon-left col-md-4">
+                                <input id="pwd1" type="password" class="form-control width-control1 " placeholder="新密码">
                                 <label for="pwd1" class="input-control-icon-left"><i class="icon icon-key"></i></label>
                             </div>
                             <div id="pwd1ErrMsg1" class="col-md-4 hidden text-red errmsg">输入有误（最少6位，包括至少1个小写字母，1个数字，1个特殊字符）</div>
                         </div>
                         <div class="row">
                             <div class="input-control has-icon-left col-md-4">
-                                <input id="pwd2" type="password" class="form-control width-control1 " placeholder="确认密码">
+                                <input id="pwd2" type="password" class="form-control width-control1 " placeholder="再次输入新密码">
                                 <label for="pwd2" class="input-control-icon-left"><i class="icon icon-key"></i></label>
                             </div>
                             <div id="pwd2ErrMsg1" class="col-md-4 hidden text-red errmsg">输入有误（两次密码输入不一致）</div>
@@ -106,8 +105,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-offset-1 col-md-3">
-                                <button class="btn btn-primary" type="button" id="register"><i class="icon icon-signin"></i>注册</button>
-                                <button class="btn" type="button" id="login"><i class="icon icon-info-sign"></i>已有账户，点此登陆</button>
+                                <button class="btn btn-primary" type="button" id="submit"><i class="icon icon-signin"></i>提交</button>
+                                <button class="btn" type="button" id="backIndex"><i class="icon icon-info-sign"></i>不想改了，返回首页</button>
                             </div>
                             <div class="col-md-offset-2 col-md-2">
                             </div>
@@ -130,6 +129,21 @@
 </div>
 
 <script type="text/javascript">
+    window.onload = function(){
+        // 赋初值
+
+        var cookieJson = cookieToJson( document.cookie);
+
+        $("#nickn").val(data.nickname);//unescape
+        var sexT;
+        if( cookieJson.sex == "M"){
+            sexT = "male";
+        }else if( cookieJson.sex == "F"){
+            sexT = "female"
+        }
+        $("#sex").val(sexT);
+    }
+
     $("input, select").on("change", function (e) {
         debugger;
         $(e.target.parentElement.parentElement.getElementsByClassName("errmsg")[0]).addClass("hidden");
@@ -141,17 +155,17 @@
         //     nickn: nickn,
         //     pwd1: pwd1,
         //     pwd2: pwd2,
-        //     sex: sex
+        //     sex: sex,
         // }
 
         var state = true;
         var pPattern = /^.*(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^&*?.]).*$/;//密码强度正则，最少6位，包括至少1个小写字母，1个数字，1个特殊字符
 
-        if(!checkMobile( data.id)){
-            //不是完整正确的11位手机号
-            $("#usersErrMsg1").removeClass("hidden");
-            $("#users").focus();
-            state = false;
+        if(data.id == undefined){
+            // 登录信息失效
+            alert("登录信息失效，请重新登录。");
+
+            window.location.href = "/user/login";
         }
         if(!pPattern.test(data.pwd1)){
             //密码强度不够或不符合要求
@@ -164,7 +178,6 @@
             $("#pwd2").focus();
             state = false;
         }
-        debugger
         if( data.sex == ""){
             //未选性别
             $("#sexErrMsg1").removeClass("hidden");
@@ -187,15 +200,16 @@
                 id: data.id,
                 nickn: data.nickn,
                 sex: data.sex.substring(0,1).toUpperCase(),
+                pwdold: data.pwdold,
                 pwd: data.pwd1
             },
-            url: "/user/reigstercheck",
+            url: "/user/change",
             async: true,
             success: function(data){
 
                 var state = data.errno;
                 var data = data.data;
-
+                debugger;
                 if( state == 0){//加个提示框
                     $("#loginpass").addClass("icon-check");
                     $("#errmsg1").addClass("hidden");
@@ -229,8 +243,8 @@
             }
         })
     }
-    document.getElementById("login").addEventListener("click", function(e){
-        window.location.href = "login";
+    document.getElementById("backIndex").addEventListener("click", function(e){
+        window.location.href = "index/showall";
     })
     $('select.chosen-select').chosen({
         no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
@@ -238,22 +252,23 @@
         search_contains: true         // 从任意位置开始检索
     });
 
-    $("#register").on("click", function () {
+    $("#submit").on("click", function () {
 
-        var id = $("#users").val();
+        var id = cookieToJson(document.cookie).id;
         var nickn = $("#nickn").val();
+        var pwdold = $("#pwdold").val();
         var pwd1 = $("#pwd1").val();
         var pwd2 = $("#pwd2").val();
         var sex = $("#sex").val();
         var data = {
             id: id,
             nickn: nickn,
+            pwdold: pwdold,
             pwd1: pwd1,
             pwd2: pwd2,
             sex: sex
         }
 
-        debugger;
         if( checkInfo(data)){
             submitInfo(data);
         }

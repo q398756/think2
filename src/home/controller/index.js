@@ -36,6 +36,70 @@ export default class extends Base {
     return this.display();
   }
 
+    async usercollectcancelAction(){
+        let allParams = this.get();
+        let userid = allParams.userid,
+            picid = allParams.picid;
+
+        let sUserid = await this.session('userid');//session中的用户id
+        var model, num;
+        if( userid == sUserid){
+            model = this.model('usercollection');
+            try{
+                let insertId = await model.where({
+                    userId: userid,
+                    picId: picid
+                }).delete();
+
+                model = this.model("user");
+
+                try{
+                    let usercol = await model.where({Id: userid}).find();
+                    console.log(usercol + "************" + usercol.PictureNum);
+                    let upuser = await model.where({Id: userid}).update({PictureNum: usercol.PictureNum-1});//返回受影响的行数
+                    num = usercol.PictureNum-1;
+                }catch (e) {
+                    throw e;
+                }
+
+                let pic;
+                model = this.model("picture");
+                try{
+                    pic = await model.where({Id: picid}).find();
+                    let uppic = await model.where({Id: picid}).update({Heat: pic.Heat-1});
+                }catch (e) {
+                    console.log(e)
+                }
+
+                model = this.model("picturetype");
+                try{
+                    let pictype = await model.where({Id: pic.TypeId}).find();
+                    let uptype = await model.where({Id: pic.TypeId}).update({Heat: pictype.Heat-1});
+                }catch (e) {
+
+                }
+            }catch (e) {//这里晚些要改
+                if(e.code == "ER_DUP_ENTRY"){
+                    this.json({"errmsg": "该用户名ID已存在或电话已被注册"});
+                }
+                else{
+                    this.json({"errmsg": e + "，请尝试修改您的输入，如果错误持续，请联系管理员"});
+                }
+            }
+
+            //设置 cookie 值
+            this.cookie('picnum', num, {
+                timeout: 3600 * 1//有效期为一小时
+            });
+            this.success({"errmsg":"", "errno":0})// 此处待修改
+        }else{
+            this.fail({"errmsg":"登录信息过期", "errno":1});
+        }
+        // let model = this.model('picture');
+        // // let data = await model.where({TypeId: allParams.picType}).find();
+        // let data = await model.where({TypeId: allParams.picType}).page(pageindex, pagenum).order('Heat DESC').countSelect()
+    }
+
   async usercollectAction(){
     let allParams = this.get();
     let userid = allParams.userid,
@@ -93,7 +157,7 @@ export default class extends Base {
         });
         this.success({"errmsg":"", "errno":0})// 此处待修改
     }else{
-      this.error({"errmsg":"登录信息过期", "errno":1});
+      this.fail({"errmsg":"登录信息过期", "errno":1});
     }
     // let model = this.model('picture');
     // // let data = await model.where({TypeId: allParams.picType}).find();

@@ -9,6 +9,7 @@
     <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
     <link rel="icon" href="/static/icon/favicon.ico" />
 
+    <link href="/static/css/user/user.css" rel="stylesheet">
     <link href="/static/css/common/chosen.min.css" rel="stylesheet">
     <script src="/static/js/common/chosen.min.js"></script>
     <script src="/static/js/common/react.js"></script>
@@ -244,11 +245,11 @@
         })
     }
     document.getElementById("backIndex").addEventListener("click", function(e){
-        window.location.href = "index/showall";
+        window.location.href = "/index/showall";
     })
     $('select.chosen-select').chosen({
         no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
-        disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+        disable_search_threshold: 10,  // 10 个以下的选择项则不显示检索框
         search_contains: true         // 从任意位置开始检索
     });
 

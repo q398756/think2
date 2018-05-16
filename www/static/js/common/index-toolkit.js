@@ -14,7 +14,8 @@ function cookieExist() {
  根据json数据修改myheader上的btn
  */
 function changeLoginbtn(data) {
-    var str = "欢迎您，" + unescape(data.nickname);//unescape(
+    debugger;
+    var str = "欢迎您，" + unescape(unescape(data.nickname));//unescape(
     $("#loginbtn").text(str);
     $("#registerbtn").addClass("hidden");
     $("#personbtn").removeClass("hidden");

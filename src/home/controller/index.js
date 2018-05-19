@@ -28,6 +28,10 @@ export default class extends Base {
     return this.display();
   }
 
+  uploadAction(){
+      return this.display();
+  }
+
   test2Action(){
     return this.display();
   }

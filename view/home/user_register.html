@@ -6,6 +6,7 @@
     <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/common/zui.js"></script>
     <link  rel="stylesheet" href="/static/css/common/zui.css"/>
+    <link  rel="stylesheet" href="/static/css/user/user.css"/>
     <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
     <link rel="icon" href="/static/icon/favicon.ico" />
 
@@ -176,9 +177,9 @@
     function submitInfo(data){
         console.log({
             Id: data.id,
-                Nickname: data.nickn,
-                Sex: data.sex.substring(0,1).toUpperCase(),
-                password: data.pwd1
+            Nickname: data.nickn,
+            Sex: data.sex.substring(0,1).toUpperCase(),
+            password: data.pwd1
         });
         $.ajax({
             type: "post",
@@ -200,6 +201,7 @@
                     $("#errmsg1").addClass("hidden");
                     $("#errmsg2").addClass("hidden");
                     $("#errmsg9").addClass("hidden");
+                    alert("注册成功！");
                     setTimeout(function () {
                         window.location.href = "/index/showall"
                     },500)

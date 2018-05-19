@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>图片上传</title>
+    <link rel="stylesheet" href="/static/style/style.css" />
+    <link rel="stylesheet" href="/static/css/index/index.css" />
+
+    <script src="/static/js/common/react.js"></script>
+    <script src="/static/js/common/react-dom.js"></script>
+    <script src="/static/js/common/babel.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/common/zui.js"></script>
+    <link  rel="stylesheet" href="/static/css/common/zui.css"/>
+    <script src="/static/js/common/my-toolkit.js"></script>
+    <script src="/static/js/common/index-toolkit.js"></script>
+    <link rel="icon" href="/static/icon/favicon.ico" />
+    <link  rel="stylesheet" href="/static/css/common/mytoolkit.css"/>
+
+    <script type="text/babel" src="/static/js/public/myheader.jsx"></script>
+    <script type="text/babel" src="/static/js/public/myfooter.jsx"></script>
+    <style>
+        .container2{
+            background-color: #fff;/* 请稍后 */
+            border:1px solid #333;
+            border-radius: 8px;
+            box-shadow:inset 0 0 10px 10px #ccc;
+        }
+        .container3{
+            margin-top:13px
+        }
+        .input-control-icon-left{
+            left: auto;
+        }
+        #hyperlinkbox .row {
+            margin-top: 20px;
+        }
+        .span1{
+            font-size: 18px;
+            margin-top: 24px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        .card{
+            overflow: hidden;
+            height: 200px;
+        }
+        .mypic{
+            height: auto;
+            width: 100%;
+        }
+        .mydiv1 { /*  */
+            padding-top: 25px;
+            padding-bottom: 20px;
+            height: 400px;
+        }
+    </style>
+    <script type="text/babel">
+
+        // var picType = getQueryVariable("picType");// my-toolkit.js
+
+        var picTypeJson, picJson;
+        var reconnectNum = 0;// 记录服务器返回的报错数
+
+        (function getPicTypeJson(){
+            $.ajax({
+                type: "get",
+                url: "/index/getPicTypeJson",
+                async: false,
+                success: function(data){
+                    // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片类型json}}}
+
+                    picTypeJson = data.data;
+
+                    console.log(picTypeJson)
+                },
+                error: function(data){
+                    if( reconnectNum++ < 3){
+                        getPicTypeJson();
+                    } else{
+                        alert("抱歉，服务器错误");
+                        // 提示连接服务器失败
+                    }
+                },
+                complete: function(data){
+                    console.log("do getPicTypeJson complete");
+                }
+            })
+        })( );
+
+    </script>
+</head>
+
+<body style="background-color: #3b5998;">
+
+<header id="myheader">
+    <script type="text/babel">
+        ReactDOM.render(
+            <Myheader/>,
+            document.getElementById('myheader')
+        )
+    </script>
+</header>
+
+
+<section style="">
+    <div class="container container2">
+        <section class="ovh" style="height: 560px;margin-top: 40px">
+            <div class="container">
+                <div class="row ovh ">
+                    <div class="col-md-offset-1 col-md-10 mydiv1 myborder1" style="background-color: #e6ecf0;">
+                        <div id="hyperlinkbox">
+                            <h1>上传您的图片。</h1>
+                            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                                <!--消除zui中设置的margin-->
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="input-control has-icon-left">
+                                            <input id="author" type="text" class="form-control width-control1 " placeholder="作者">
+                                            <label for="author" class="input-control-icon-left"><i class="icon icon-info-sign"></i></label>
+                                        </div>
+                                        <div id="authorErrMsg1" class="col-md-4 hidden text-red errmsg"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-control has-icon-left">
+                                            <input id="desc" type="text" class="form-control width-control1 " placeholder="描述">
+                                            <label for="desc" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-control">
+                                            <select data-placeholder="请选择图片类型" class="chosen-select form-control" id="type">
+                                                <option value=""></option>
+                                                <option value="male" data-keys="male">男</option>
+                                                <option value="female" data-keys="female">女</option>
+                                            </select>
+                                        </div>
+                                        <div id="sexErrMsg1" class="hidden text-red  errmsg">请选择</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-offset-1">
+                                            <button class="btn btn-primary" type="button" id="submit"><i class="icon icon-signin"></i>提交</button>
+                                            <span class="btn btn-info" onclick="document.getElementById('image-chooser').click();">上传图片</span>
+                                        </div>
+                                        <div class="">
+                                            <input type="file" id="image-chooser" style="display:none" onchange="loadImage(this)">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div id="result" class="col-md-12 text-center"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-push-4"></div>
+                </div>
+                <div class="row">...</div>
+            </div>
+        </section>
+    </div>
+</section>
+
+<footer id="myfooter">
+    <script type="text/babel">
+        ReactDOM.render(
+            <Myfooter/>,
+            document.getElementById('myfooter')
+        )
+    </script>
+</footer>
+
+<script type="text/babel">
+    function loadImage(tar) {
+        //检验是否为图像文件
+        var file = document.getElementById("image-chooser").files[0];
+        if(!/image\/\w+/.test(file.type)){
+            alert("看清楚，这个需要图片！");
+            return false;
+        }
+        var reader = new FileReader();
+        //将文件以Data URL形式读入页面
+        reader.readAsDataURL(file);
+        reader.onload=function(e){
+            var result=document.getElementById("result");
+            //显示文件
+            result.innerHTML='<img width="240px" src="' + this.result +'" alt="" />';
+        }
+    }
+
+    function picOnload() {
+        var height = this.height();
+        if(this.height() <= 198){
+            this.height(198);
+        }
+    }
+
+</script>
+</body>
+
+</html>

@@ -60,8 +60,6 @@
     </style>
     <script type="text/babel">
 
-        // var picType = getQueryVariable("picType");// my-toolkit.js
-
         var picTypeJson, picJson;
         var reconnectNum = 0;// 记录服务器返回的报错数
 
@@ -74,8 +72,7 @@
                     // 返回data: {error, errmsg, data{count, totalPages, data{这里才是图片类型json}}}
 
                     picTypeJson = data.data;
-
-                    console.log(picTypeJson)
+                    console.log(picTypeJson);
                 },
                 error: function(data){
                     if( reconnectNum++ < 3){
@@ -131,14 +128,12 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="input-control">
+                                        <div class="input-control has-icon-left">
                                             <select data-placeholder="请选择图片类型" class="chosen-select form-control" id="type">
                                                 <option value=""></option>
-                                                <option value="male" data-keys="male">男</option>
-                                                <option value="female" data-keys="female">女</option>
                                             </select>
+                                            <div id="typeErrMsg1" class="hidden text-red errmsg">请选择</div>
                                         </div>
-                                        <div id="sexErrMsg1" class="hidden text-red  errmsg">请选择</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-offset-1">
@@ -174,6 +169,45 @@
 </footer>
 
 <script type="text/babel">
+
+    var $option;
+    var $select = $("#type");
+    debugger;
+    for( var i=0; i<picTypeJson.count; i++){
+        debugger;
+        $option = "<option value='" + picTypeJson.data[i].Id + "'>" + picTypeJson.data[i].Name + "</option>";
+        $select.append($option);
+    }
+
+    document.getElementById("submit").addEventListener("click", uploadpic);
+    function uploadpic() {
+
+        /* 判断数据是否为空 */
+
+        var formData = new FormData();
+        var imgfile = document.getElementById("image-chooser").files[0];
+        formData.append('author', document.getElementById("author").value);
+        formData.append('desc', document.getElementById("desc").value);
+        formData.append('type', document.getElementById("type").value);
+        formData.append('file', imgfile, randomString(16) + "." + imgfile.type.substring(6));
+        $.ajax({
+            type: "post",
+            data: formData,
+            url: "/index/uploadpic",
+            processData: false,  // 不处理数据
+            contentType: false,  // 不设置内容类型
+            success: function(data){
+                debugger;
+            },
+            error: function(data){
+
+            },
+            complete: function(data){
+                console.log("do picture upload complete");
+            }
+        })
+    }
+
     function loadImage(tar) {
         //检验是否为图像文件
         var file = document.getElementById("image-chooser").files[0];

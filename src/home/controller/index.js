@@ -40,6 +40,52 @@ export default class extends Base {
     return this.display();
   }
 
+  testpathAction(){
+      console.log(think.RESOURCE_PATH );
+  }
+
+  async uploadpicAction(){
+      if(this.isPost()){//判断是否以post发送消息给后台了
+          var fs = require("fs");
+          let file = this.file('file');
+          let filepath = file.path;//为防止上传的时候因文件名重复而覆盖同名已上传文件，path是MD5方式产生的随机名称
+          var savepath = "C:\\code\\thinkjs-test\\think2\\www\\static\\images\\" + filepath.substring(filepath.lastIndexOf("\\")+1);
+          let uploadpath = think.RESOURCE_PATH + '/static/image';
+          let key = this.post();
+          let data = await this.model('picture').max('Id');//获得对应的json数据
+          var updata = {
+              Id: data+1,
+              // author: key.nickn,
+              Desc: key.desc,
+              TypeId: key.type,
+              Address: filepath.substring(filepath.lastIndexOf("\\")+1)// 文件名
+          };
+          console.log("Address:" + updata.Address + "|Savepath:" + savepath);
+          fs.renameSync( filepath, savepath);
+          try{
+              let result = await this.model('picture').add(updata);
+              // console.log();
+              this.success(result);
+          }
+          catch(e){
+              console.log(e);
+              if(e.code == "ER_DUP_ENTRY"){
+                  this.json({"errmsg": "该用户名ID已存在或电话已被注册"});
+              }
+              else{
+                  this.json({"errmsg": e + "，请尝试修改您的输入，如果错误持续，请联系管理员"});
+              }
+          }
+          //将上传的文件（路径为filepath的文件）移动到第二个参数所在的路径，并改为第二个参数的文件名。
+
+
+      }
+      else{
+          this.json({"errmsg":"请先登录"});
+      }
+  }
+
+
     async usercollectcancelAction(){
         let allParams = this.get();
         let userid = allParams.userid,

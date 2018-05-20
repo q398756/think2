@@ -29,13 +29,6 @@ export default class extends Base {
     }
 
     async changeAction(){
-
-        // data: {
-        //     id: data.id,
-        //         nickn: data.nickn,
-        //         sex: data.sex.substring(0,1).toUpperCase(),
-        //         pwd: data.pwd1
-        // },
         if(this.isPost()){//判断是否以post发送消息给后台了
             let key = this.post();
             let data = await this.model('user').where({"Id": key.id}).find();
@@ -94,7 +87,6 @@ export default class extends Base {
     }
 
     async getcolpicjsonAction(){
-
         let allParams = this.get();
         let userid = allParams.userid;
 

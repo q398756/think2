@@ -254,13 +254,12 @@
     });
 
     $("#submit").on("click", function () {
-
-        var id = cookieToJson(document.cookie).id;
+        {var id = cookieToJson(document.cookie).id;
         var nickn = $("#nickn").val();
         var pwdold = $("#pwdold").val();
         var pwd1 = $("#pwd1").val();
         var pwd2 = $("#pwd2").val();
-        var sex = $("#sex").val();
+        var sex = $("#sex").val();}/* 此处代码隐藏 */
         var data = {
             id: id,
             nickn: nickn,

@@ -64,21 +64,18 @@ export default class extends Base {
           fs.renameSync( filepath, savepath);
           try{
               let result = await this.model('picture').add(updata);
+              var model = this.model("picturetype")
+              let picnum = await model.where({Id: key.type}).find();
+              console.log(picnum + "************" + picnum.Num);
+              let upuser = await model.where({Id: key.type}).update({Num: picnum.Num+1});//返回受影响的行数
+
               // console.log();
-              this.success(result);
+              this.success(upuser);
           }
           catch(e){
               console.log(e);
-              if(e.code == "ER_DUP_ENTRY"){
-                  this.json({"errmsg": "该用户名ID已存在或电话已被注册"});
-              }
-              else{
-                  this.json({"errmsg": e + "，请尝试修改您的输入，如果错误持续，请联系管理员"});
-              }
+              this.fail({"errmsg": e + "，请尝试修改您的输入，如果错误持续，请联系管理员"});
           }
-          //将上传的文件（路径为filepath的文件）移动到第二个参数所在的路径，并改为第二个参数的文件名。
-
-
       }
       else{
           this.json({"errmsg":"请先登录"});

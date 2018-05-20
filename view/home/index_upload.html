@@ -117,21 +117,22 @@
                                     <div class="row">
                                         <div class="input-control has-icon-left">
                                             <input id="author" type="text" class="form-control width-control1 " placeholder="作者">
-                                            <label for="author" class="input-control-icon-left"><i class="icon icon-info-sign"></i></label>
+                                            <label for="author" class="input-control-icon-left"><i class="icon icon-user"></i></label>
                                         </div>
                                         <div id="authorErrMsg1" class="col-md-4 hidden text-red errmsg"></div>
                                     </div>
                                     <div class="row">
                                         <div class="input-control has-icon-left">
                                             <input id="desc" type="text" class="form-control width-control1 " placeholder="描述">
-                                            <label for="desc" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                                            <label for="desc" class="input-control-icon-left"><i class="icon icon-file-text-o"></i></label>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="input-control has-icon-left">
-                                            <select data-placeholder="请选择图片类型" class="chosen-select form-control" id="type">
-                                                <option value=""></option>
+                                            <select placeholder="请选择图片类型" class="chosen-select form-control" id="type">
+                                                <option value="" disabled selected>请选择图片类型</option>
                                             </select>
+                                            <label for="desc" class="input-control-icon-left"><i class="icon icon-bars"></i></label>
                                             <div id="typeErrMsg1" class="hidden text-red errmsg">请选择</div>
                                         </div>
                                     </div>
@@ -197,7 +198,8 @@
             processData: false,  // 不处理数据
             contentType: false,  // 不设置内容类型
             success: function(data){
-                debugger;
+                alert("上传成功");
+                window.location.reload();
             },
             error: function(data){
 

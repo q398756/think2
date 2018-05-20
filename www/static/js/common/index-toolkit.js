@@ -21,6 +21,7 @@ function changeLoginbtn(data) {
     $("#personbtn").removeClass("hidden");
     $("#logoutli").removeClass("hidden");
     $("#changeinfoli").removeClass("hidden");
+    $("#uploadbtn").removeClass("hidden");
 }
 
 /*

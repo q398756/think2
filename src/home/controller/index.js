@@ -47,7 +47,7 @@ export default class extends Base {
   async uploadpicAction(){
       if(this.isPost()){//判断是否以post发送消息给后台了
           var fs = require("fs");
-          let file = this.file('file');
+          let file = this.file('file');//获取文件
           let filepath = file.path;//为防止上传的时候因文件名重复而覆盖同名已上传文件，path是MD5方式产生的随机名称
           var savepath = "C:\\code\\thinkjs-test\\think2\\www\\static\\images\\" + filepath.substring(filepath.lastIndexOf("\\")+1);
           let uploadpath = think.RESOURCE_PATH + '/static/image';
@@ -60,8 +60,7 @@ export default class extends Base {
               TypeId: key.type,
               Address: filepath.substring(filepath.lastIndexOf("\\")+1)// 文件名
           };
-          console.log("Address:" + updata.Address + "|Savepath:" + savepath);
-          fs.renameSync( filepath, savepath);
+          fs.renameSync( filepath, savepath);// 移动临时文件
           try{
               let result = await this.model('picture').add(updata);
               var model = this.model("picturetype")

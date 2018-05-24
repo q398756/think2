@@ -46,7 +46,7 @@ var Myheader = React.createClass({
                                     </a>
                                     <ul className="dropdown-menu">
                                         <li><a href="/user/login" id="loginbtn" className="text-ellipsis">登入</a></li>
-                                        <li className="hidden" id="uploadbtn"><a href="/user/upload" className="text-ellipsis">图片上传</a></li>
+                                        <li className="hidden" id="uploadbtn"><a href="/index/upload" className="text-ellipsis">图片上传</a></li>
                                         <li className="hidden" id="logoutli"><a href="javascript:void (0)" id="logout">登出</a></li>
                                         <li className="hidden" id="changeinfoli"><a href="/user/changeinfo">信息修改</a></li>
                                         <li><a href="">帮助</a></li>
